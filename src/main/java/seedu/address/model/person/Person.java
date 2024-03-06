@@ -18,6 +18,7 @@ public class Person {
 
     // Identity fields
     private final Name name;
+    private final Remark remark;
     private final Phone phone;
     private final Email email;
 
@@ -28,15 +29,19 @@ public class Person {
     /**
      * Every field must be present and not null.
      */
-    public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags) {
+    public Person(Name name, Phone phone, Email email, Address address, Remark remark, Set<Tag> tags) {
         requireAllNonNull(name, phone, email, address, tags);
         this.name = name;
         this.phone = phone;
         this.email = email;
         this.address = address;
+        this.remark = remark;
         this.tags.addAll(tags);
     }
 
+    public Remark getRemark() {
+        return remark;
+    }
     public Name getName() {
         return name;
     }
@@ -105,13 +110,19 @@ public class Person {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .add("name", name)
-                .add("phone", phone)
-                .add("email", email)
-                .add("address", address)
-                .add("tags", tags)
-                .toString();
+        final StringBuilder builder = new StringBuilder();
+        builder.append(getName())
+                .append(" Phone: ")
+                .append(getPhone())
+                .append(" Email: ")
+                .append(getEmail())
+                .append(" Address: ")
+                .append(getAddress())
+                .append(" Remark: ")
+                .append(getRemark())
+                .append(" Tags: ");
+        getTags().forEach(builder::append);
+        return builder.toString();
     }
 
 }
