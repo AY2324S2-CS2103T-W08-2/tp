@@ -9,11 +9,13 @@ import java.util.regex.Pattern;
 
 import vitalconnect.commons.core.LogsCenter;
 import vitalconnect.logic.commands.AddCommand;
+import vitalconnect.logic.commands.AddContactCommand;
 import vitalconnect.logic.commands.ClearCommand;
 import vitalconnect.logic.commands.Command;
 import vitalconnect.logic.commands.CreateAptCommand;
 import vitalconnect.logic.commands.DeleteAptCommand;
 import vitalconnect.logic.commands.DeleteCommand;
+import vitalconnect.logic.commands.DeleteContactCommand;
 import vitalconnect.logic.commands.EditCommand;
 import vitalconnect.logic.commands.ExitCommand;
 import vitalconnect.logic.commands.FindCommand;
@@ -91,6 +93,12 @@ public class ClinicParser {
 
         case DeleteAptCommand.COMMAND_WORD:
             return new DeleteAptCommandParser().parse(arguments);
+
+        case AddContactCommand.COMMAND_WORD:
+            return new AddContactCommandParser().parse(arguments);
+
+        case DeleteContactCommand.COMMAND_WORD:
+            return new DeleteContactCommandParser().parse(arguments);
 
         default:
             logger.finer("This user input caused a ParseException: " + userInput);

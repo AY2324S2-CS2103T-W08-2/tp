@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 import vitalconnect.commons.util.ToStringBuilder;
 import vitalconnect.model.person.Person;
 import vitalconnect.model.person.UniquePersonList;
+import vitalconnect.model.person.identificationinformation.Name;
 
 /**
  * Wraps all data at the clinic level
@@ -65,6 +66,19 @@ public class Clinic implements ReadOnlyClinic {
     public boolean hasPerson(Person person) {
         requireNonNull(person);
         return persons.contains(person);
+    }
+
+    /**
+     * Returns true if a person with the same name as {@code name} exists in the clinic.
+     */
+    public Person findPersonByName(Name name) {
+        requireNonNull(name);
+        for (Person p : persons) {
+            if (p.getName().fullName.equalsIgnoreCase(name.toString())) {
+                return p;
+            }
+        }
+        return null;
     }
 
     /**

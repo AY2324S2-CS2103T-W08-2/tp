@@ -85,6 +85,7 @@ public class MainApp extends Application {
             }
             initialData = clinicOptional.orElseGet(SampleDataUtil::getSampleClinic);
         } catch (DataLoadingException e) {
+            System.out.println(e.getCause());
             logger.warning("Data file at " + storage.getClinicFilePath() + " could not be loaded."
                     + " Will be starting with an empty Clinic.");
             initialData = new Clinic();

@@ -14,6 +14,8 @@ import javafx.collections.transformation.FilteredList;
 import vitalconnect.commons.core.GuiSettings;
 import vitalconnect.commons.core.LogsCenter;
 import vitalconnect.model.person.Person;
+import vitalconnect.model.person.contactinformation.ContactInformation;
+import vitalconnect.model.person.identificationinformation.Name;
 
 
 /**
@@ -126,16 +128,35 @@ public class ModelManager implements Model {
     }
 
     @Override
+    public Person findPersonByName(Name name) {
+        requireNonNull(name);
+        return clinic.findPersonByName(name);
+    }
+
+    @Override
     public void setPerson(Person target, Person editedPerson) {
         requireAllNonNull(target, editedPerson);
 
         clinic.setPerson(target, editedPerson);
     }
+
     @Override
     public boolean doesPersonExist(String name) {
         requireNonNull(name);
         return filteredPersons.stream()
                 .anyMatch(person -> person.getName().fullName.equalsIgnoreCase(name));
+    }
+
+    /**
+     * Updates the contact information of the person in the clinic.
+     * @param name Name of the person to be updated
+     * @param contactInformation New contact information of the person
+     */
+    public void updatePersonContactInformation(Name name, ContactInformation contactInformation) {
+        Person person = clinic.findPersonByName(name);
+        Person personToUpdate = person.copyPerson();
+        personToUpdate.setContactInformation(contactInformation);
+        setPerson(person, personToUpdate);
     }
 
 

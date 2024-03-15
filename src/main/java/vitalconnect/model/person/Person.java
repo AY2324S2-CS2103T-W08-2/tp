@@ -25,7 +25,7 @@ public class Person {
 
     // Information fields
     private final IdentificationInformation identificationInformation;
-    private final ContactInformation contactInformation;
+    private ContactInformation contactInformation;
 
     // Data fields`
     private final Set<Tag> tags = new HashSet<>();
@@ -34,9 +34,21 @@ public class Person {
      * Every field must be present and not null.
      */
     public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags) {
-        requireAllNonNull(name, phone, email, address, tags);
+        requireAllNonNull(name);
         this.identificationInformation = new IdentificationInformation(name);
         this.contactInformation = new ContactInformation(email, phone, address);
+
+        this.tags.addAll(tags);
+    }
+
+    /**
+     * Every field must be present and not null.
+     */
+    public Person(IdentificationInformation identificationInformation,
+                  ContactInformation contactInformation, Set<Tag> tags) {
+        requireAllNonNull(identificationInformation, contactInformation);
+        this.identificationInformation = identificationInformation;
+        this.contactInformation = contactInformation;
 
         this.tags.addAll(tags);
     }
@@ -47,6 +59,10 @@ public class Person {
 
     public ContactInformation getContactInformation() {
         return this.contactInformation;
+    }
+
+    public void setContactInformation(ContactInformation contactInformation) {
+        this.contactInformation = contactInformation;
     }
 
     public Name getName() {
@@ -107,6 +123,10 @@ public class Person {
                 && getEmail().equals(otherPerson.getEmail())
                 && getAddress().equals(otherPerson.getAddress())
                 && tags.equals(otherPerson.tags);
+    }
+
+    public Person copyPerson() {
+        return new Person(this.identificationInformation, this.contactInformation, this.tags);
     }
 
     @Override
