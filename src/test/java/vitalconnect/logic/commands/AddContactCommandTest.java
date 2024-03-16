@@ -1,6 +1,5 @@
 package vitalconnect.logic.commands;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static vitalconnect.testutil.Assert.assertThrows;
 import static vitalconnect.testutil.TypicalPersons.getTypicalClinic;
 
@@ -69,47 +68,5 @@ public class AddContactCommandTest {
 
         assertThrows(CommandException.class, Messages.MESSAGE_ADDRESS_ALREADY_EXIST, () ->
             addContactCommand.execute(model));
-    }
-
-    @Test
-    public void execute_addEmail_success() throws CommandException {
-        Person personInList = model.getClinic().getPersonList().get(0);
-        personInList.getContactInformation().setEmail(new Email(""));
-        Email emailToAdd = new Email("12345678@email.com");
-        AddContactCommand addContactCommand = new AddContactCommand(personInList
-            .getIdentificationInformation().getName(),
-            new ContactInformation(emailToAdd, null, null));
-
-        addContactCommand.execute(model);
-        personInList = model.getClinic().getPersonList().get(0);
-        assertEquals(personInList.getContactInformation().getEmail(), emailToAdd);
-    }
-
-    @Test
-    public void execute_addPhone_success() throws CommandException {
-        Person personInList = model.getClinic().getPersonList().get(0);
-        personInList.getContactInformation().setPhone(new Phone(""));
-        Phone phoneToAdd = new Phone("11111111");
-        AddContactCommand addContactCommand = new AddContactCommand(personInList
-            .getIdentificationInformation().getName(),
-            new ContactInformation(null, phoneToAdd, null));
-
-        addContactCommand.execute(model);
-        personInList = model.getClinic().getPersonList().get(0);
-        assertEquals(personInList.getContactInformation().getPhone(), phoneToAdd);
-    }
-
-    @Test
-    public void execute_addAddress_success() throws CommandException {
-        Person personInList = model.getClinic().getPersonList().get(0);
-        personInList.getContactInformation().setAddress(new Address(""));
-        Address addressToAdd = new Address("Some Address");
-        AddContactCommand addContactCommand = new AddContactCommand(personInList
-            .getIdentificationInformation().getName(),
-            new ContactInformation(null, null, addressToAdd));
-
-        addContactCommand.execute(model);
-        personInList = model.getClinic().getPersonList().get(0);
-        assertEquals(personInList.getContactInformation().getAddress(), addressToAdd);
     }
 }

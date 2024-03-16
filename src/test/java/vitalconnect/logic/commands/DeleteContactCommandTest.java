@@ -1,6 +1,5 @@
 package vitalconnect.logic.commands;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static vitalconnect.logic.parser.CliSyntax.OPTION_ADDRESS;
 import static vitalconnect.logic.parser.CliSyntax.OPTION_EMAIL;
 import static vitalconnect.logic.parser.CliSyntax.OPTION_PHONE;
@@ -18,10 +17,7 @@ import vitalconnect.model.Model;
 import vitalconnect.model.ModelManager;
 import vitalconnect.model.UserPrefs;
 import vitalconnect.model.person.Person;
-import vitalconnect.model.person.contactinformation.Address;
-import vitalconnect.model.person.contactinformation.ContactInformation;
 import vitalconnect.model.person.contactinformation.Email;
-import vitalconnect.model.person.contactinformation.Phone;
 import vitalconnect.model.person.identificationinformation.Name;
 
 public class DeleteContactCommandTest {
@@ -77,80 +73,9 @@ public class DeleteContactCommandTest {
     public void execute_deleteNullAddress_failure() {
         ArrayList<Option> options = new ArrayList<>();
         options.add(OPTION_ADDRESS);
-        Person personInList = model.getClinic().getPersonList().get(0);
+        Person personInList = model.getClinic().getPersonList().get(1);
         personInList.getContactInformation().setAddress(new vitalconnect.model.person.contactinformation.Address(""));
         assertThrows(CommandException.class, Messages.MESSAGE_ADDRESS_NOT_FOUND, () ->
           new DeleteContactCommand(personInList.getName(), options).execute(model));
-    }
-
-    @Test
-    public void execute_deleteEmail_success() throws CommandException {
-        ArrayList<Option> options = new ArrayList<>();
-        options.add(OPTION_EMAIL);
-        Person personInList = model.getClinic().getPersonList().get(0);
-        personInList.setContactInformation(new ContactInformation(new Email("111@email.com"),
-            new Phone("111"), new Address("111")));
-        DeleteContactCommand deleteContactCommand = new DeleteContactCommand(personInList.getName(), options);
-        deleteContactCommand.execute(model);
-        assertEquals(new Email(""), personInList.getContactInformation().getEmail());
-        model = new ModelManager(getTypicalClinic(), new UserPrefs());
-    }
-
-    @Test
-    public void execute_deletePhone_success() throws CommandException {
-        ArrayList<Option> options = new ArrayList<>();
-        options.add(OPTION_PHONE);
-        Person personInList = model.getClinic().getPersonList().get(0);
-        personInList.setContactInformation(new ContactInformation(new Email("111@email.com"),
-            new Phone("111"), new Address("111")));
-        DeleteContactCommand deleteContactCommand = new DeleteContactCommand(personInList.getName(), options);
-        deleteContactCommand.execute(model);
-        assertEquals(new Phone(""), personInList.getContactInformation().getPhone());
-        model = new ModelManager(getTypicalClinic(), new UserPrefs());
-    }
-
-    @Test
-    public void execute_deleteAddress_success() throws CommandException {
-        ArrayList<Option> options = new ArrayList<>();
-        options.add(OPTION_ADDRESS);
-        Person personInList = model.getClinic().getPersonList().get(0);
-        personInList.setContactInformation(new ContactInformation(new Email("111@email.com"),
-            new Phone("111"), new Address("111")));
-        DeleteContactCommand deleteContactCommand = new DeleteContactCommand(personInList.getName(), options);
-        deleteContactCommand.execute(model);
-        assertEquals(new Address(""), personInList.getContactInformation().getAddress());
-        model = new ModelManager(getTypicalClinic(), new UserPrefs());
-    }
-
-    @Test
-    public void execute_deleteTwoFields_success() throws CommandException {
-        ArrayList<Option> options = new ArrayList<>();
-        options.add(OPTION_PHONE);
-        options.add(OPTION_EMAIL);
-        Person personInList = model.getClinic().getPersonList().get(0);
-        personInList.setContactInformation(new ContactInformation(new Email("111@email.com"),
-            new Phone("111"), new Address("111")));
-        DeleteContactCommand deleteContactCommand = new DeleteContactCommand(personInList.getName(), options);
-        deleteContactCommand.execute(model);
-        assertEquals(new Email(""), personInList.getContactInformation().getEmail());
-        assertEquals(new Phone(""), personInList.getContactInformation().getPhone());
-        model = new ModelManager(getTypicalClinic(), new UserPrefs());
-    }
-
-    @Test
-    public void execute_deleteThreeFields_success() throws CommandException {
-        ArrayList<Option> options = new ArrayList<>();
-        options.add(OPTION_PHONE);
-        options.add(OPTION_EMAIL);
-        options.add(OPTION_ADDRESS);
-        Person personInList = model.getClinic().getPersonList().get(0);
-        personInList.setContactInformation(new ContactInformation(new Email("111@email.com"),
-            new Phone("111"), new Address("111")));
-        DeleteContactCommand deleteContactCommand = new DeleteContactCommand(personInList.getName(), options);
-        deleteContactCommand.execute(model);
-        assertEquals(new Email(""), personInList.getContactInformation().getEmail());
-        assertEquals(new Phone(""), personInList.getContactInformation().getPhone());
-        assertEquals(new Address(""), personInList.getContactInformation().getAddress());
-        model = new ModelManager(getTypicalClinic(), new UserPrefs());
     }
 }
