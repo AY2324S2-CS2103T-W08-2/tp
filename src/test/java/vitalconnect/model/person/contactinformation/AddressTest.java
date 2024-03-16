@@ -15,7 +15,7 @@ public class AddressTest {
 
     @Test
     public void constructor_invalidAddress_throwsIllegalArgumentException() {
-        String invalidAddress = "";
+        String invalidAddress = "/";
         assertThrows(IllegalArgumentException.class, () -> new Address(invalidAddress));
     }
 
@@ -25,8 +25,7 @@ public class AddressTest {
         assertThrows(NullPointerException.class, () -> Address.isValidAddress(null));
 
         // invalid addresses
-        assertFalse(Address.isValidAddress("")); // empty string
-        assertFalse(Address.isValidAddress(" ")); // spaces only
+        assertFalse(Address.isValidAddress("/")); // should not contain '/' character
 
         // valid addresses
         assertTrue(Address.isValidAddress("Blk 456, Den Road, #01-355"));
