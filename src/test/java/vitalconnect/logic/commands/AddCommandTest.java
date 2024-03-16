@@ -24,6 +24,8 @@ import vitalconnect.model.Model;
 import vitalconnect.model.ReadOnlyClinic;
 import vitalconnect.model.ReadOnlyUserPrefs;
 import vitalconnect.model.person.Person;
+import vitalconnect.model.person.contactinformation.ContactInformation;
+import vitalconnect.model.person.identificationinformation.Name;
 import vitalconnect.testutil.PersonBuilder;
 
 public class AddCommandTest {
@@ -178,6 +180,16 @@ public class AddCommandTest {
         public void deleteAppointment(Appointment appointment) {
             throw new AssertionError("This method should not be called.");
 
+        }
+
+        @Override
+        public Person findPersonByName(Name name) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void updatePersonContactInformation(Name name, ContactInformation contactInformation) {
+            throw new AssertionError("This method should not be called.");
         }
 
     }
