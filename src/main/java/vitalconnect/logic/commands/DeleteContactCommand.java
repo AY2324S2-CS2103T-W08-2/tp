@@ -1,13 +1,23 @@
 package vitalconnect.logic.commands;
 
-import static vitalconnect.logic.parser.CliSyntax.PREFIX_ADDRESS;
-import static vitalconnect.logic.parser.CliSyntax.PREFIX_EMAIL;
+import static java.util.Objects.requireNonNull;
+import static vitalconnect.logic.Messages.MESSAGE_ADDRESS_NOT_FOUND;
+import static vitalconnect.logic.Messages.MESSAGE_EMAIL_NOT_FOUND;
+import static vitalconnect.logic.Messages.MESSAGE_NO_PREFIX_PROVIDED;
+import static vitalconnect.logic.Messages.MESSAGE_PERSON_NOT_FOUND;
+import static vitalconnect.logic.Messages.MESSAGE_PHONE_NOT_FOUND;
+import static vitalconnect.logic.parser.CliSyntax.OPTION_ADDRESS;
+import static vitalconnect.logic.parser.CliSyntax.OPTION_EMAIL;
+import static vitalconnect.logic.parser.CliSyntax.OPTION_PHONE;
 import static vitalconnect.logic.parser.CliSyntax.PREFIX_NAME;
-import static vitalconnect.logic.parser.CliSyntax.PREFIX_PHONE;
+import static vitalconnect.logic.parser.CliSyntax.PREFIX_OPTION;
 import static vitalconnect.model.Model.PREDICATE_SHOW_ALL_PERSONS;
 
+import java.util.ArrayList;
+import java.util.Objects;
+
 import vitalconnect.logic.commands.exceptions.CommandException;
-import vitalconnect.logic.parser.Prefix;
+import vitalconnect.logic.parser.Option;
 import vitalconnect.model.Model;
 import vitalconnect.model.person.Person;
 import vitalconnect.model.person.contactinformation.Address;
@@ -26,21 +36,24 @@ public class DeleteContactCommand extends Command {
         + "Parameters: (required field)\n"
         + PREFIX_NAME + "NAME "
         + "(optional but at least specify one)\n"
-        + PREFIX_PHONE
-        + PREFIX_EMAIL
-        + PREFIX_ADDRESS
+        + PREFIX_OPTION + " "
+        + OPTION_PHONE + " "
+        + OPTION_EMAIL + " "
+        + OPTION_ADDRESS
         + "\n"
         + "Example: " + COMMAND_WORD + " "
         + PREFIX_NAME + "John Doe "
-        + PREFIX_PHONE;
+        + PREFIX_OPTION + " "
+        + OPTION_PHONE;
 
     private final Name name;
-    private final Prefix[] options;
+    private final ArrayList<Option> options;
 
     /**
      * Creates an AddCommand to add the specified {@code ContactInformation}
      */
-    public DeleteContactCommand(Name name, Prefix[] options) {
+    public DeleteContactCommand(Name name, ArrayList<Option> options) {
+        requireNonNull(name);
         this.name = name;
         this.options = options;
     }
@@ -50,44 +63,43 @@ public class DeleteContactCommand extends Command {
      */
     @Override
     public CommandResult execute(Model model) throws CommandException {
+        requireNonNull(model);
         // if person not exist, throw error
         Person personToEdit = model.findPersonByName(name);
         if (personToEdit == null) {
-            throw new CommandException("Person not found");
+            throw new CommandException(MESSAGE_PERSON_NOT_FOUND);
         }
         // fetch current person contact information
         ContactInformation ciToEdit = personToEdit.getContactInformation();
-        System.out.println("aha!!!");
-        System.out.println(ciToEdit.toString());
         // check if all fields are null
-        if (options[0] == null && options[1] == null && options[2] == null) {
-            throw new CommandException("At least one field should not be empty");
+        if (options.stream().allMatch(Objects::isNull)) {
+            throw new CommandException(MESSAGE_NO_PREFIX_PROVIDED);
         }
         // Run through all the options
-        for (Prefix option: options) {
+        for (Option option: options) {
             if (option == null) {
                 continue;
             }
 
             // Check if the field exists on the person's contact information
-            if (option.equals(PREFIX_EMAIL) && ciToEdit.getEmailValue().equals("")) {
-                throw new CommandException("Email not found on the person");
+            if (option.equals(OPTION_EMAIL) && ciToEdit.getEmailValue().equals("")) {
+                throw new CommandException(MESSAGE_EMAIL_NOT_FOUND);
             }
-            if (option.equals(PREFIX_PHONE) && ciToEdit.getPhoneValue().equals("")) {
-                throw new CommandException("Phone not found on the person");
+            if (option.equals(OPTION_PHONE) && ciToEdit.getPhoneValue().equals("")) {
+                throw new CommandException(MESSAGE_PHONE_NOT_FOUND);
             }
-            if (option.equals(PREFIX_ADDRESS) && ciToEdit.getAddressValue().equals("")) {
-                throw new CommandException("Address not found on the person");
+            if (option.equals(OPTION_ADDRESS) && ciToEdit.getAddressValue().equals("")) {
+                throw new CommandException(MESSAGE_ADDRESS_NOT_FOUND);
             }
 
             // Delete the respective field from the person's contact information
-            if (option.equals(PREFIX_EMAIL)) {
+            if (option.equals(OPTION_EMAIL)) {
                 ciToEdit.setEmail(new Email(""));
             }
-            if (option.equals(PREFIX_PHONE)) {
+            if (option.equals(OPTION_PHONE)) {
                 ciToEdit.setPhone(new Phone(""));
             }
-            if (option.equals(PREFIX_ADDRESS)) {
+            if (option.equals(OPTION_ADDRESS)) {
                 ciToEdit.setAddress(new Address(""));
             }
         }
@@ -95,5 +107,17 @@ public class DeleteContactCommand extends Command {
         model.updatePersonContactInformation(name, ciToEdit);
         model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
         return new CommandResult("Contact deleted successfully");
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
+        if (!(other instanceof DeleteContactCommand)) {
+            return false;
+        }
+        return name.equals(((DeleteContactCommand) other).name)
+            && options.equals(((DeleteContactCommand) other).options); // state check
     }
 }

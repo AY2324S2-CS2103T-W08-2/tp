@@ -35,7 +35,6 @@ public class AddContactCommandParser implements Parser<AddContactCommand> {
         if (!(arePrefixesPresent(argMultimap, PREFIX_NAME)
             || arePrefixesPresent(argMultimap, PREFIX_ID))
             || !argMultimap.getPreamble().isEmpty()) {
-            System.out.println("Something Wrong??");
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddContactCommand.MESSAGE_USAGE));
         }
 

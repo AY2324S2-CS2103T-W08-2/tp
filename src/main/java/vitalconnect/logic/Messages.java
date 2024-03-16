@@ -18,6 +18,15 @@ public class Messages {
     public static final String MESSAGE_PERSONS_LISTED_OVERVIEW = "%1$d persons listed!";
     public static final String MESSAGE_DUPLICATE_FIELDS =
                 "Multiple values specified for the following single-valued field(s): ";
+    public static final String MESSAGE_PERSON_NOT_FOUND = "Person not found";
+    public static final String MESSAGE_EMAIL_NOT_FOUND = "Email not found";
+    public static final String MESSAGE_PHONE_NOT_FOUND = "Phone not found";
+    public static final String MESSAGE_ADDRESS_NOT_FOUND = "Address not found";
+    public static final String MESSAGE_EMAIL_ALREADY_EXIST = "Email already exists";
+    public static final String MESSAGE_PHONE_ALREADY_EXIST = "Phone already exists";
+    public static final String MESSAGE_ADDRESS_ALREADY_EXIST = "Address already exists";
+    public static final String MESSAGE_NO_PREFIX_PROVIDED = "At least one prefix must be provided";
+    public static final String MESSAGE_OPTION_NOT_VALID = "Option not valid";
 
     /**
      * Returns an error message indicating the duplicate prefixes.

@@ -3,11 +3,10 @@ package vitalconnect.logic.parser;
 
 
 import static vitalconnect.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
-import static vitalconnect.logic.parser.CliSyntax.PREFIX_ADDRESS;
-import static vitalconnect.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static vitalconnect.logic.parser.CliSyntax.PREFIX_NAME;
-import static vitalconnect.logic.parser.CliSyntax.PREFIX_PHONE;
+import static vitalconnect.logic.parser.CliSyntax.PREFIX_OPTION;
 
+import java.util.ArrayList;
 import java.util.stream.Stream;
 
 import vitalconnect.logic.commands.DeleteContactCommand;
@@ -26,31 +25,34 @@ public class DeleteContactCommandParser implements Parser<DeleteContactCommand> 
     @Override
     public DeleteContactCommand parse(String userInput) throws ParseException {
         ArgumentMultimap argMultimap =
-            ArgumentTokenizer.tokenize(userInput, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS);
+            ArgumentTokenizer.tokenize(userInput, PREFIX_NAME, PREFIX_OPTION);
 
-        if (!arePrefixesPresent(argMultimap, PREFIX_NAME)) {
+        if (!arePrefixesPresent(argMultimap, PREFIX_NAME, PREFIX_OPTION)) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteContactCommand.MESSAGE_USAGE));
         }
 
-        Prefix[] options = new Prefix[3];
-        if (argMultimap.getValue(PREFIX_PHONE).isPresent()) {
-            System.out.println("Phone is present");
-            System.out.println(argMultimap.getValue(PREFIX_PHONE).get());
-            options[0] = PREFIX_PHONE;
-        }
-        if (argMultimap.getValue(PREFIX_EMAIL).isPresent()) {
-            System.out.println("Email is present");
-            System.out.println(argMultimap.getValue(PREFIX_EMAIL).get());
-            options[1] = PREFIX_EMAIL;
-        }
-        if (argMultimap.getValue(PREFIX_ADDRESS).isPresent()) {
-            System.out.println("Address is present");
-            System.out.println(argMultimap.getValue(PREFIX_ADDRESS).get());
-            options[2] = PREFIX_ADDRESS;
+        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NAME);
+        // Parse options
+        ArrayList<Option> options = new ArrayList<>();
+        if (argMultimap.getValue(PREFIX_OPTION).isPresent()) {
+            String[] optionStrings = argMultimap.getValue(PREFIX_OPTION).get().split(" ");
+            options = stringToOptionArray(optionStrings);
         }
 
         Name name = ParserUtil.parseName(argMultimap.getValue(PREFIX_NAME).get());
         return new DeleteContactCommand(name, options);
+    }
+
+    private ArrayList<Option> stringToOptionArray(String[] optionStrings) throws ParseException {
+        ArrayList<Option> options = new ArrayList<>();
+        for (String option : optionStrings) {
+            if (Option.of(option) == null) {
+                throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT,
+                    DeleteContactCommand.MESSAGE_USAGE));
+            }
+            options.add(Option.of(option));
+        }
+        return options;
     }
 
     /**

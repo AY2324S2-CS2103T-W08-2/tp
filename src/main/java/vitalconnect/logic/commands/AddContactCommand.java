@@ -1,6 +1,10 @@
 package vitalconnect.logic.commands;
 
 import static java.util.Objects.requireNonNull;
+import static vitalconnect.logic.Messages.MESSAGE_ADDRESS_ALREADY_EXIST;
+import static vitalconnect.logic.Messages.MESSAGE_EMAIL_ALREADY_EXIST;
+import static vitalconnect.logic.Messages.MESSAGE_PERSON_NOT_FOUND;
+import static vitalconnect.logic.Messages.MESSAGE_PHONE_ALREADY_EXIST;
 import static vitalconnect.logic.parser.CliSyntax.PREFIX_ADDRESS;
 import static vitalconnect.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static vitalconnect.logic.parser.CliSyntax.PREFIX_NAME;
@@ -51,27 +55,26 @@ public class AddContactCommand extends Command {
 
     @Override
     public CommandResult execute(Model model) throws CommandException {
+        requireNonNull(model);
         // if person not exist, throw error
         Person p = model.findPersonByName(name);
         if (p == null) {
-            throw new CommandException("Person not found");
+            throw new CommandException(MESSAGE_PERSON_NOT_FOUND);
         }
         // fetch current person contact information, update fields.
         ContactInformation ci = p.getContactInformation();
-        System.out.println("aha!!!");
-        System.out.println(ci.getPhone());
         // check if current field of change is already occupied
         Email emptyEmail = new Email("");
         Phone emptyPhone = new Phone("");
         Address emptyAddress = new Address("");
         if (!ci.getEmail().equals(emptyEmail) && !email.equals(emptyEmail)) {
-            throw new CommandException("Email already exists");
+            throw new CommandException(MESSAGE_EMAIL_ALREADY_EXIST);
         }
         if (!ci.getPhone().equals(emptyPhone) && !phone.equals(emptyPhone)) {
-            throw new CommandException("Phone already exists");
+            throw new CommandException(MESSAGE_PHONE_ALREADY_EXIST);
         }
         if (!ci.getAddress().equals(emptyAddress) && !address.equals(emptyAddress)) {
-            throw new CommandException("Address already exists");
+            throw new CommandException(MESSAGE_ADDRESS_ALREADY_EXIST);
         }
         // add not null contact information
         if (!email.equals(emptyEmail)) {
@@ -88,5 +91,15 @@ public class AddContactCommand extends Command {
         model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
         // update the person to the model
         return new CommandResult("Contact added successfully");
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return other == this // short circuit if same object
+                || (other instanceof AddContactCommand // instanceof handles nulls
+                && name.equals(((AddContactCommand) other).name)
+                && email.equals(((AddContactCommand) other).email)
+                && phone.equals(((AddContactCommand) other).phone)
+                && address.equals(((AddContactCommand) other).address));
     }
 }

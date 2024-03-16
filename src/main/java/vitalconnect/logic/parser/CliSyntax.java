@@ -12,4 +12,8 @@ public class CliSyntax {
     public static final Prefix PREFIX_EMAIL = new Prefix("e/");
     public static final Prefix PREFIX_ADDRESS = new Prefix("a/");
     public static final Prefix PREFIX_TAG = new Prefix("t/");
+    public static final Prefix PREFIX_OPTION = new Prefix("o/");
+    public static final Option OPTION_PHONE = Option.of("-p");
+    public static final Option OPTION_EMAIL = Option.of("-e");
+    public static final Option OPTION_ADDRESS = Option.of("-a");
 }
