@@ -16,7 +16,7 @@ import vitalconnect.model.person.identificationinformation.Name;
 import vitalconnect.model.person.medicalinformation.Allergy;
 import vitalconnect.model.person.medicalinformation.Height;
 import vitalconnect.model.person.medicalinformation.Weight;
-import vitalconnect.model.tag.Tag;
+import vitalconnect.model.allergytag.AllergyTag;
 
 /**
  * Parses input arguments and creates a new AddCommand object
@@ -31,25 +31,24 @@ public class AddCommandParser implements Parser<AddCommand> {
     public AddCommand parse(String args) throws ParseException {
         ArgumentMultimap argMultimap =
                 ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS,
-                        PREFIX_TAG, PREFIX_HEIGHT, PREFIX_WEIGHT, PREFIX_ALLERGY);
+                        PREFIX_ALLERGY, PREFIX_HEIGHT, PREFIX_WEIGHT);
 
         if (!arePrefixesPresent(argMultimap, PREFIX_NAME, PREFIX_ADDRESS, PREFIX_PHONE, PREFIX_EMAIL,
-                PREFIX_HEIGHT, PREFIX_WEIGHT, PREFIX_ALLERGY)
+                PREFIX_HEIGHT, PREFIX_WEIGHT)
                 || !argMultimap.getPreamble().isEmpty()) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_USAGE));
         }
 
         argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS,
-                PREFIX_HEIGHT, PREFIX_WEIGHT, PREFIX_ALLERGY);
+                PREFIX_HEIGHT, PREFIX_WEIGHT);
         Name name = ParserUtil.parseName(argMultimap.getValue(PREFIX_NAME).get());
         Phone phone = ParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE).get());
         Email email = ParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL).get());
         Address address = ParserUtil.parseAddress(argMultimap.getValue(PREFIX_ADDRESS).get());
-        Set<Tag> tagList = ParserUtil.parseTags(argMultimap.getAllValues(PREFIX_TAG));
+        Set<AllergyTag> allergyTagList = ParserUtil.parseTags(argMultimap.getAllValues(PREFIX_ALLERGY));
         Height height = ParserUtil.parseHeight(argMultimap.getValue(PREFIX_HEIGHT).get());
         Weight weight = ParserUtil.parseWeight(argMultimap.getValue(PREFIX_WEIGHT).get());
-        Set<Allergy> allergySet = ParserUtil.parseAllergies(argMultimap.getAllValues(PREFIX_ALLERGY));
-        Person person = new Person(name, phone, email, address, tagList, height, weight, allergySet);
+        Person person = new Person(name, phone, email, address, allergyTagList, height, weight);
 
         return new AddCommand(person);
     }
@@ -61,5 +60,4 @@ public class AddCommandParser implements Parser<AddCommand> {
     private static boolean arePrefixesPresent(ArgumentMultimap argumentMultimap, Prefix... prefixes) {
         return Stream.of(prefixes).allMatch(prefix -> argumentMultimap.getValue(prefix).isPresent());
     }
-
 }

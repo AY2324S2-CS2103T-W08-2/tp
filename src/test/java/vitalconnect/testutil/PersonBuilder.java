@@ -3,12 +3,14 @@ package vitalconnect.testutil;
 import java.util.HashSet;
 import java.util.Set;
 
+import vitalconnect.model.allergytag.AllergyTag;
 import vitalconnect.model.person.Person;
 import vitalconnect.model.person.contactinformation.Address;
 import vitalconnect.model.person.contactinformation.Email;
 import vitalconnect.model.person.contactinformation.Phone;
 import vitalconnect.model.person.identificationinformation.Name;
-import vitalconnect.model.tag.Tag;
+import vitalconnect.model.person.medicalinformation.Height;
+import vitalconnect.model.person.medicalinformation.Weight;
 import vitalconnect.model.util.SampleDataUtil;
 
 /**
@@ -20,12 +22,16 @@ public class PersonBuilder {
     public static final String DEFAULT_PHONE = "85355255";
     public static final String DEFAULT_EMAIL = "amy@gmail.com";
     public static final String DEFAULT_ADDRESS = "123, Jurong West Ave 6, #08-111";
+    public static final String DEFAULT_HEIGHT = "170.00";
+    public static final String DEFAULT_WEIGHT = "60.00";
 
     private Name name;
     private Phone phone;
     private Email email;
     private Address address;
-    private Set<Tag> tags;
+    private Set<AllergyTag> allergyTags;
+    private Height height;
+    private Weight weight;
 
     /**
      * Creates a {@code PersonBuilder} with the default details.
@@ -35,7 +41,9 @@ public class PersonBuilder {
         phone = new Phone(DEFAULT_PHONE);
         email = new Email(DEFAULT_EMAIL);
         address = new Address(DEFAULT_ADDRESS);
-        tags = new HashSet<>();
+        allergyTags = new HashSet<>();
+        height = new Height(DEFAULT_HEIGHT);
+        weight = new Weight(DEFAULT_WEIGHT);
     }
 
     /**
@@ -46,7 +54,7 @@ public class PersonBuilder {
         phone = personToCopy.getPhone();
         email = personToCopy.getEmail();
         address = personToCopy.getAddress();
-        tags = new HashSet<>(personToCopy.getTags());
+        allergyTags = new HashSet<>(personToCopy.getAllergyTag());
     }
 
     /**
@@ -61,7 +69,7 @@ public class PersonBuilder {
      * Parses the {@code tags} into a {@code Set<Tag>} and set it to the {@code Person} that we are building.
      */
     public PersonBuilder withTags(String ... tags) {
-        this.tags = SampleDataUtil.getTagSet(tags);
+        this.allergyTags = SampleDataUtil.getTagSet(tags);
         return this;
     }
 
@@ -90,7 +98,7 @@ public class PersonBuilder {
     }
 
     public Person build() {
-        return new Person(name, phone, email, address, tags);
+        return new Person(name, phone, email, address, allergyTags, height, weight);
     }
 
 }

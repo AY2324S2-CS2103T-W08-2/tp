@@ -4,14 +4,14 @@ import static vitalconnect.logic.parser.CliSyntax.PREFIX_ADDRESS;
 import static vitalconnect.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static vitalconnect.logic.parser.CliSyntax.PREFIX_NAME;
 import static vitalconnect.logic.parser.CliSyntax.PREFIX_PHONE;
-import static vitalconnect.logic.parser.CliSyntax.PREFIX_TAG;
+import static vitalconnect.logic.parser.CliSyntax.PREFIX_ALLERGY;
 
 import java.util.Set;
 
 import vitalconnect.logic.commands.AddCommand;
 import vitalconnect.logic.commands.EditCommand.EditPersonDescriptor;
+import vitalconnect.model.allergytag.AllergyTag;
 import vitalconnect.model.person.Person;
-import vitalconnect.model.tag.Tag;
 
 /**
  * A utility class for Person.
@@ -34,8 +34,8 @@ public class PersonUtil {
         sb.append(PREFIX_PHONE + person.getPhone().value + " ");
         sb.append(PREFIX_EMAIL + person.getEmail().value + " ");
         sb.append(PREFIX_ADDRESS + person.getAddress().value + " ");
-        person.getTags().stream().forEach(
-            s -> sb.append(PREFIX_TAG + s.tagName + " ")
+        person.getAllergyTag().stream().forEach(
+            s -> sb.append(PREFIX_ALLERGY + s.allergy + " ")
         );
         return sb.toString();
     }
@@ -50,11 +50,11 @@ public class PersonUtil {
         descriptor.getEmail().ifPresent(email -> sb.append(PREFIX_EMAIL).append(email.value).append(" "));
         descriptor.getAddress().ifPresent(address -> sb.append(PREFIX_ADDRESS).append(address.value).append(" "));
         if (descriptor.getTags().isPresent()) {
-            Set<Tag> tags = descriptor.getTags().get();
-            if (tags.isEmpty()) {
-                sb.append(PREFIX_TAG);
+            Set<AllergyTag> allergyTags = descriptor.getTags().get();
+            if (allergyTags.isEmpty()) {
+                sb.append(PREFIX_ALLERGY);
             } else {
-                tags.forEach(s -> sb.append(PREFIX_TAG).append(s.tagName).append(" "));
+                allergyTags.forEach(s -> sb.append(PREFIX_ALLERGY).append(s.allergy).append(" "));
             }
         }
         return sb.toString();

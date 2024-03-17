@@ -1,4 +1,4 @@
-package vitalconnect.model.tag;
+package vitalconnect.model.allergytag;
 
 import static java.util.Objects.requireNonNull;
 import static vitalconnect.commons.util.AppUtil.checkArgument;
@@ -7,22 +7,22 @@ import static vitalconnect.commons.util.AppUtil.checkArgument;
  * Represents a Tag in the clinic.
  * Guarantees: immutable; name is valid as declared in {@link #isValidTagName(String)}
  */
-public class Tag {
+public class AllergyTag {
 
     public static final String MESSAGE_CONSTRAINTS = "Tags names should be alphanumeric";
     public static final String VALIDATION_REGEX = "\\p{Alnum}+";
 
-    public final String tagName;
+    public final String allergy;
 
     /**
      * Constructs a {@code Tag}.
      *
-     * @param tagName A valid tag name.
+     * @param allergy A valid tag name.
      */
-    public Tag(String tagName) {
-        requireNonNull(tagName);
-        checkArgument(isValidTagName(tagName), MESSAGE_CONSTRAINTS);
-        this.tagName = tagName;
+    public AllergyTag(String allergy) {
+        requireNonNull(allergy);
+        checkArgument(isValidTagName(allergy), MESSAGE_CONSTRAINTS);
+        this.allergy = allergy;
     }
 
     /**
@@ -39,24 +39,24 @@ public class Tag {
         }
 
         // instanceof handles nulls
-        if (!(other instanceof Tag)) {
+        if (!(other instanceof AllergyTag)) {
             return false;
         }
 
-        Tag otherTag = (Tag) other;
-        return tagName.equals(otherTag.tagName);
+        AllergyTag otherAllergyTag = (AllergyTag) other;
+        return allergy.equals(otherAllergyTag.allergy);
     }
 
     @Override
     public int hashCode() {
-        return tagName.hashCode();
+        return allergy.hashCode();
     }
 
     /**
      * Format state as text for viewing.
      */
     public String toString() {
-        return '[' + tagName + ']';
+        return '[' + allergy + ']';
     }
 
 }

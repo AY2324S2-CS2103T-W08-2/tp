@@ -11,11 +11,10 @@ import vitalconnect.model.person.contactinformation.Email;
 import vitalconnect.model.person.contactinformation.Phone;
 import vitalconnect.model.person.identificationinformation.IdentificationInformation;
 import vitalconnect.model.person.identificationinformation.Name;
-import vitalconnect.model.person.medicalinformation.Allergy;
 import vitalconnect.model.person.medicalinformation.Height;
 import vitalconnect.model.person.medicalinformation.MedicalInformation;
 import vitalconnect.model.person.medicalinformation.Weight;
-import vitalconnect.model.tag.Tag;
+import vitalconnect.model.allergytag.AllergyTag;
 
 /**
  * Represents a Person in the clinic.
@@ -29,28 +28,24 @@ public class Person {
     private final ContactInformation contactInformation;
     private final MedicalInformation medicalInformation;
 
-    // Data fields`
-    private final Set<Tag> tags = new HashSet<>();
 
     /**
      * Every field must be present and not null.
      */
-    public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags, Height height, Weight weight, Set<Allergy> allergySet) {
-        requireAllNonNull(name, phone, email, address, tags, height, weight);
+    public Person(Name name, Phone phone, Email email, Address address, Set<AllergyTag> allergyAllergyTags, Height height, Weight weight) {
+        requireAllNonNull(name, phone, email, address, allergyAllergyTags, height, weight);
         this.identificationInformation = new IdentificationInformation(name);
         this.contactInformation = new ContactInformation(email, phone, address);
-        this.medicalInformation = new MedicalInformation(height, weight, allergySet);
-
-        this.tags.addAll(tags);
+        this.medicalInformation = new MedicalInformation(height, weight, allergyAllergyTags);
     }
-
-    public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags, Height height, Weight weight) {
-        requireAllNonNull(name, phone, email, address, tags, height, weight);
+    /*
+        constructor without allergies.
+     */
+    public Person(Name name, Phone phone, Email email, Address address, Height height, Weight weight) {
+        requireAllNonNull(name, phone, email, address, height, weight);
         this.identificationInformation = new IdentificationInformation(name);
         this.contactInformation = new ContactInformation(email, phone, address);
         this.medicalInformation = new MedicalInformation(height, weight);
-
-        this.tags.addAll(tags);
     }
 
     public IdentificationInformation getIdentificationInformation() {
@@ -89,17 +84,8 @@ public class Person {
         return medicalInformation.getWeight();
     }
 
-    public Set<Allergy> getAllergySet() {
-        return medicalInformation.getAllergySet();
-    }
+    public Set<AllergyTag> getAllergyTag() { return medicalInformation.getAllergyTag(); }
 
-    /**
-     * Returns an immutable tag set, which throws {@code UnsupportedOperationException}
-     * if modification is attempted.
-     */
-    public Set<Tag> getTags() {
-        return Collections.unmodifiableSet(tags);
-    }
 
     /**
      * Returns true if both persons have the same name.
@@ -134,13 +120,13 @@ public class Person {
                 && getPhone().equals(otherPerson.getPhone())
                 && getEmail().equals(otherPerson.getEmail())
                 && getAddress().equals(otherPerson.getAddress())
-                && tags.equals(otherPerson.tags);
+                && getAllergyTag().equals(otherPerson.getAllergyTag());
     }
 
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(getName(), getPhone(), getEmail(), getAddress(), tags);
+        return Objects.hash(getName(), getPhone(), getEmail(), getAddress(), getAllergyTag());
     }
 
     @Override
@@ -150,10 +136,9 @@ public class Person {
                 .add("phone", getPhone())
                 .add("email", getEmail())
                 .add("address", getAddress())
-                .add("tags", tags)
+                .add("allergies", getAllergyTag())
                 .add("height", getHeight())
                 .add("weight", getWeight())
-                .add("allergies", getAllergySet())
                 .toString();
     }
 }

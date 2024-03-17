@@ -5,12 +5,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import vitalconnect.logic.commands.EditCommand.EditPersonDescriptor;
+import vitalconnect.model.allergytag.AllergyTag;
 import vitalconnect.model.person.Person;
 import vitalconnect.model.person.contactinformation.Address;
 import vitalconnect.model.person.contactinformation.Email;
 import vitalconnect.model.person.contactinformation.Phone;
 import vitalconnect.model.person.identificationinformation.Name;
-import vitalconnect.model.tag.Tag;
 
 /**
  * A utility class to help with building EditPersonDescriptor objects.
@@ -36,7 +36,7 @@ public class EditPersonDescriptorBuilder {
         descriptor.setPhone(person.getPhone());
         descriptor.setEmail(person.getEmail());
         descriptor.setAddress(person.getAddress());
-        descriptor.setTags(person.getTags());
+        descriptor.setTags(person.getAllergyTag());
     }
 
     /**
@@ -76,8 +76,8 @@ public class EditPersonDescriptorBuilder {
      * that we are building.
      */
     public EditPersonDescriptorBuilder withTags(String... tags) {
-        Set<Tag> tagSet = Stream.of(tags).map(Tag::new).collect(Collectors.toSet());
-        descriptor.setTags(tagSet);
+        Set<AllergyTag> allergyTagSet = Stream.of(tags).map(AllergyTag::new).collect(Collectors.toSet());
+        descriptor.setTags(allergyTagSet);
         return this;
     }
 

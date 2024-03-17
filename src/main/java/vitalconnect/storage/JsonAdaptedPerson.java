@@ -15,10 +15,9 @@ import vitalconnect.model.person.contactinformation.Address;
 import vitalconnect.model.person.contactinformation.Email;
 import vitalconnect.model.person.contactinformation.Phone;
 import vitalconnect.model.person.identificationinformation.Name;
-import vitalconnect.model.person.medicalinformation.Allergy;
 import vitalconnect.model.person.medicalinformation.Height;
 import vitalconnect.model.person.medicalinformation.Weight;
-import vitalconnect.model.tag.Tag;
+import vitalconnect.model.allergytag.AllergyTag;
 
 /**
  * Jackson-friendly version of {@link Person}.
@@ -33,26 +32,24 @@ class JsonAdaptedPerson {
     private final String address;
     private final String height;
     private final String weight;
-    private final List<String> allergies = new ArrayList<>();
-    private final List<JsonAdaptedTag> tags = new ArrayList<>();
+    private final List<JsonAdaptedTag> allergyTag = new ArrayList<>();
 
     /**
      * Constructs a {@code JsonAdaptedPerson} with the given person details.
      */
     @JsonCreator
     public JsonAdaptedPerson(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
-            @JsonProperty("email") String email, @JsonProperty("address") String address,
-            @JsonProperty("tags") List<JsonAdaptedTag> tags, @JsonProperty("height") String height,
-            @JsonProperty("weight") String weight, @JsonProperty("allergies") List<String> allergies) {
+                             @JsonProperty("email") String email, @JsonProperty("address") String address,
+                             @JsonProperty("tags") List<JsonAdaptedTag> allergyTag, @JsonProperty("height") String height,
+                             @JsonProperty("weight") String weight) {
         this.name = name;
         this.phone = phone;
         this.email = email;
         this.address = address;
         this.height = height;
         this.weight = weight;
-        this.allergies.addAll(allergies);
-        if (tags != null) {
-            this.tags.addAll(tags);
+        if (allergyTag != null) {
+            this.allergyTag.addAll(allergyTag);
         }
     }
 
@@ -66,10 +63,7 @@ class JsonAdaptedPerson {
         address = source.getAddress().value;
         height = source.getMedicalInformation().getHeight().stringHeight;
         weight = source.getMedicalInformation().getWeight().stringWeight;
-        allergies.addAll(source.getMedicalInformation().getAllergySet().stream()
-                .map(allergy -> allergy.allergy)
-                .collect(Collectors.toList()));
-        tags.addAll(source.getTags().stream()
+        allergyTag.addAll(source.getAllergyTag().stream()
                 .map(JsonAdaptedTag::new)
                 .collect(Collectors.toList()));
     }
@@ -80,9 +74,9 @@ class JsonAdaptedPerson {
      * @throws IllegalValueException if there were any data constraints violated in the adapted person.
      */
     public Person toModelType() throws IllegalValueException {
-        final List<Tag> personTags = new ArrayList<>();
-        for (JsonAdaptedTag tag : tags) {
-            personTags.add(tag.toModelType());
+        final List<AllergyTag> personAllergyTags = new ArrayList<>();
+        for (JsonAdaptedTag tag : allergyTag) {
+            personAllergyTags.add(tag.toModelType());
         }
 
         if (name == null) {
@@ -133,19 +127,8 @@ class JsonAdaptedPerson {
         }
         final Weight modelWeight = new Weight(weight);
 
-        final Set<Tag> modelTags = new HashSet<>(personTags);
+        final Set<AllergyTag> modelAllergyTags = new HashSet<>(personAllergyTags);
 
-        if (allergies.isEmpty()) {
-            return new Person(modelName, modelPhone, modelEmail, modelAddress, modelTags, modelHeight, modelWeight);
-        }
-        final Set<Allergy> modelAllergies = new HashSet<>();
-        for (String allergy : this.allergies) {
-            if (!Allergy.isValidAllergy(allergy)) {
-                throw new IllegalValueException(Allergy.MESSAGE_CONSTRAINTS);
-            } else {
-                modelAllergies.add(new Allergy(allergy));
-            }
-        }
-        return new Person(modelName, modelPhone, modelEmail, modelAddress, modelTags, modelHeight, modelWeight, modelAllergies);
+        return new Person(modelName, modelPhone, modelEmail, modelAddress, modelAllergyTags, modelHeight, modelWeight);
     }
 }

@@ -385,10 +385,10 @@
     JAVADOC CHECKS
     -->
 
-    <!-- Checks that all block-tags are ordered correctly. -->
+    <!-- Checks that all block-allergyTags are ordered correctly. -->
     <module name="AtclauseOrder"/>
 
-    <!-- Checks that Javadoc block tags appear only at the beginning of the line. -->
+    <!-- Checks that Javadoc block allergyTags appear only at the beginning of the line. -->
     <module name="JavadocBlockTagLocation"/>
 
     <!-- Checks that all Javadoc comments start from the second line. -->
@@ -400,7 +400,7 @@
     <!-- Checks that each non-empty line in Javadoc has whitespace after leading asterisk. -->
     <module name="JavadocMissingWhitespaceAfterAsterisk"/>
 
-    <!-- Checks that for block tags, indentation of continuation lines is at least 4 spaces. -->
+    <!-- Checks that for block allergyTags, indentation of continuation lines is at least 4 spaces. -->
     <module name="JavadocTagContinuationIndentation"/>
 
     <!-- Checks the Javadoc's format for every class, enumeration and interface. -->
