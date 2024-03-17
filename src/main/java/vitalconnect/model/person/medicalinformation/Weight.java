@@ -33,7 +33,7 @@ public class Weight {
     }
 
     /**
-     * Returns true if a given string is a valid name.
+     * Returns true if a given string is a valid weight.
      */
     public static boolean isValidWeight(String test) {
         return test.matches(VALIDATION_REGEX);

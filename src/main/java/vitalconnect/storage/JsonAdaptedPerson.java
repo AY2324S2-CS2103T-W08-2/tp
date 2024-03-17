@@ -15,6 +15,9 @@ import vitalconnect.model.person.contactinformation.Address;
 import vitalconnect.model.person.contactinformation.Email;
 import vitalconnect.model.person.contactinformation.Phone;
 import vitalconnect.model.person.identificationinformation.Name;
+import vitalconnect.model.person.medicalinformation.Allergy;
+import vitalconnect.model.person.medicalinformation.Height;
+import vitalconnect.model.person.medicalinformation.Weight;
 import vitalconnect.model.tag.Tag;
 
 /**
@@ -28,6 +31,9 @@ class JsonAdaptedPerson {
     private final String phone;
     private final String email;
     private final String address;
+    private final String height;
+    private final String weight;
+    private final List<String> allergies = new ArrayList<>();
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
 
     /**
@@ -36,11 +42,15 @@ class JsonAdaptedPerson {
     @JsonCreator
     public JsonAdaptedPerson(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
             @JsonProperty("email") String email, @JsonProperty("address") String address,
-            @JsonProperty("tags") List<JsonAdaptedTag> tags) {
+            @JsonProperty("tags") List<JsonAdaptedTag> tags, @JsonProperty("height") String height,
+            @JsonProperty("weight") String weight, @JsonProperty("allergies") List<String> allergies) {
         this.name = name;
         this.phone = phone;
         this.email = email;
         this.address = address;
+        this.height = height;
+        this.weight = weight;
+        this.allergies.addAll(allergies);
         if (tags != null) {
             this.tags.addAll(tags);
         }
@@ -54,6 +64,11 @@ class JsonAdaptedPerson {
         phone = source.getPhone().value;
         email = source.getEmail().value;
         address = source.getAddress().value;
+        height = source.getMedicalInformation().getHeight().stringHeight;
+        weight = source.getMedicalInformation().getWeight().stringWeight;
+        allergies.addAll(source.getMedicalInformation().getAllergyList().stream()
+                .map(allergy -> allergy.allergy)
+                .collect(Collectors.toList()));
         tags.addAll(source.getTags().stream()
                 .map(JsonAdaptedTag::new)
                 .collect(Collectors.toList()));
@@ -102,8 +117,35 @@ class JsonAdaptedPerson {
         }
         final Address modelAddress = new Address(address);
 
-        final Set<Tag> modelTags = new HashSet<>(personTags);
-        return new Person(modelName, modelPhone, modelEmail, modelAddress, modelTags);
-    }
+        if (height == null) {
+            throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Height.class.getSimpleName()));
+        }
+        if (!Height.isValidHeight(height)) {
+            throw new IllegalValueException(Height.MESSAGE_CONSTRAINTS);
+        }
+        final Height modelHeight = new Height(height);
 
+        if (weight == null) {
+            throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Height.class.getSimpleName()));
+        }
+        if (!Height.isValidHeight(weight)) {
+            throw new IllegalValueException(Height.MESSAGE_CONSTRAINTS);
+        }
+        final Weight modelWeight = new Weight(weight);
+
+        final Set<Tag> modelTags = new HashSet<>(personTags);
+
+        if (allergies.isEmpty()) {
+            return new Person(modelName, modelPhone, modelEmail, modelAddress, modelTags, modelHeight, modelWeight);
+        }
+        final List<Allergy> allergies = new ArrayList<>();
+        for (String allergy : this.allergies) {
+            if (!Allergy.isValidAllergy(allergy)) {
+                throw new IllegalValueException(Allergy.MESSAGE_CONSTRAINTS);
+            } else {
+                allergies.add(new Allergy(allergy));
+            }
+        }
+        return new Person(modelName, modelPhone, modelEmail, modelAddress, modelTags, modelHeight, modelWeight, allergies);
+    }
 }

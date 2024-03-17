@@ -2,10 +2,7 @@ package vitalconnect.model.person;
 
 import static vitalconnect.commons.util.CollectionUtil.requireAllNonNull;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import vitalconnect.commons.util.ToStringBuilder;
 import vitalconnect.model.person.contactinformation.Address;
@@ -14,6 +11,10 @@ import vitalconnect.model.person.contactinformation.Email;
 import vitalconnect.model.person.contactinformation.Phone;
 import vitalconnect.model.person.identificationinformation.IdentificationInformation;
 import vitalconnect.model.person.identificationinformation.Name;
+import vitalconnect.model.person.medicalinformation.Allergy;
+import vitalconnect.model.person.medicalinformation.Height;
+import vitalconnect.model.person.medicalinformation.MedicalInformation;
+import vitalconnect.model.person.medicalinformation.Weight;
 import vitalconnect.model.tag.Tag;
 
 /**
@@ -26,6 +27,7 @@ public class Person {
     // Information fields
     private final IdentificationInformation identificationInformation;
     private final ContactInformation contactInformation;
+    private final MedicalInformation medicalInformation;
 
     // Data fields`
     private final Set<Tag> tags = new HashSet<>();
@@ -33,10 +35,20 @@ public class Person {
     /**
      * Every field must be present and not null.
      */
-    public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags) {
-        requireAllNonNull(name, phone, email, address, tags);
+    public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags, Height height, Weight weight, List<Allergy> allergyList) {
+        requireAllNonNull(name, phone, email, address, tags, height, weight);
         this.identificationInformation = new IdentificationInformation(name);
         this.contactInformation = new ContactInformation(email, phone, address);
+        this.medicalInformation = new MedicalInformation(height, weight, allergyList);
+
+        this.tags.addAll(tags);
+    }
+
+    public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags, Height height, Weight weight) {
+        requireAllNonNull(name, phone, email, address, tags, height, weight);
+        this.identificationInformation = new IdentificationInformation(name);
+        this.contactInformation = new ContactInformation(email, phone, address);
+        this.medicalInformation = new MedicalInformation(height, weight);
 
         this.tags.addAll(tags);
     }
@@ -47,6 +59,10 @@ public class Person {
 
     public ContactInformation getContactInformation() {
         return this.contactInformation;
+    }
+
+    public MedicalInformation getMedicalInformation() {
+        return this.medicalInformation;
     }
 
     public Name getName() {
@@ -63,6 +79,18 @@ public class Person {
 
     public Address getAddress() {
         return contactInformation.getAddress();
+    }
+
+    public Height getHeight() {
+        return medicalInformation.getHeight();
+    }
+
+    public Weight getWeight() {
+        return medicalInformation.getWeight();
+    }
+
+    public List<Allergy> getAllergyList() {
+        return medicalInformation.getAllergyList();
     }
 
     /**
@@ -123,7 +151,9 @@ public class Person {
                 .add("email", getEmail())
                 .add("address", getAddress())
                 .add("tags", tags)
+                .add("height", getHeight())
+                .add("weight", getWeight())
+                .add("allergies", getAllergyList())
                 .toString();
     }
-
 }
