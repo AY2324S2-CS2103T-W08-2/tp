@@ -66,7 +66,7 @@ class JsonAdaptedPerson {
         address = source.getAddress().value;
         height = source.getMedicalInformation().getHeight().stringHeight;
         weight = source.getMedicalInformation().getWeight().stringWeight;
-        allergies.addAll(source.getMedicalInformation().getAllergyList().stream()
+        allergies.addAll(source.getMedicalInformation().getAllergySet().stream()
                 .map(allergy -> allergy.allergy)
                 .collect(Collectors.toList()));
         tags.addAll(source.getTags().stream()
@@ -138,14 +138,14 @@ class JsonAdaptedPerson {
         if (allergies.isEmpty()) {
             return new Person(modelName, modelPhone, modelEmail, modelAddress, modelTags, modelHeight, modelWeight);
         }
-        final List<Allergy> allergies = new ArrayList<>();
+        final Set<Allergy> modelAllergies = new HashSet<>();
         for (String allergy : this.allergies) {
             if (!Allergy.isValidAllergy(allergy)) {
                 throw new IllegalValueException(Allergy.MESSAGE_CONSTRAINTS);
             } else {
-                allergies.add(new Allergy(allergy));
+                modelAllergies.add(new Allergy(allergy));
             }
         }
-        return new Person(modelName, modelPhone, modelEmail, modelAddress, modelTags, modelHeight, modelWeight, allergies);
+        return new Person(modelName, modelPhone, modelEmail, modelAddress, modelTags, modelHeight, modelWeight, modelAllergies);
     }
 }

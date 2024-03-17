@@ -35,11 +35,11 @@ public class Person {
     /**
      * Every field must be present and not null.
      */
-    public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags, Height height, Weight weight, List<Allergy> allergyList) {
+    public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags, Height height, Weight weight, Set<Allergy> allergySet) {
         requireAllNonNull(name, phone, email, address, tags, height, weight);
         this.identificationInformation = new IdentificationInformation(name);
         this.contactInformation = new ContactInformation(email, phone, address);
-        this.medicalInformation = new MedicalInformation(height, weight, allergyList);
+        this.medicalInformation = new MedicalInformation(height, weight, allergySet);
 
         this.tags.addAll(tags);
     }
@@ -89,8 +89,8 @@ public class Person {
         return medicalInformation.getWeight();
     }
 
-    public List<Allergy> getAllergyList() {
-        return medicalInformation.getAllergyList();
+    public Set<Allergy> getAllergySet() {
+        return medicalInformation.getAllergySet();
     }
 
     /**
@@ -153,7 +153,7 @@ public class Person {
                 .add("tags", tags)
                 .add("height", getHeight())
                 .add("weight", getWeight())
-                .add("allergies", getAllergyList())
+                .add("allergies", getAllergySet())
                 .toString();
     }
 }

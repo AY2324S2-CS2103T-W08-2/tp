@@ -1,22 +1,24 @@
 package vitalconnect.model.person.medicalinformation;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MedicalInformation {
     private final Height height;
     private final Weight weight;
-    private final List<Allergy> allergyList;
+    private final Set<Allergy> allergySet;
 
-    public MedicalInformation(Height height, Weight weight, List<Allergy> allergyList) {
+    public MedicalInformation(Height height, Weight weight, Set<Allergy> allergySet) {
         this.height = height;
         this.weight = weight;
-        this.allergyList = allergyList;
+        this.allergySet = allergySet;
     }
 
     public MedicalInformation(Height height, Weight weight) {
         this.height = height;
         this.weight = weight;
-        this.allergyList = List.of();
+        this.allergySet = new HashSet<>();
     }
 
     public Height getHeight() {
@@ -27,8 +29,8 @@ public class MedicalInformation {
         return weight;
     }
 
-    public List<Allergy> getAllergyList() {
-        return allergyList;
+    public Set<Allergy> getAllergySet() {
+        return allergySet;
     }
 
     @Override
@@ -39,7 +41,7 @@ public class MedicalInformation {
                 .append(" Weight: ")
                 .append(getWeight())
                 .append(" Allergies: ");
-        getAllergyList().forEach(builder::append);
+        getAllergySet().forEach(builder::append);
         return builder.toString();
     }
 
@@ -54,7 +56,7 @@ public class MedicalInformation {
         }
 
         MedicalInformation otherInfo = (MedicalInformation) other;
-        return height.equals(otherInfo.height) && weight.equals(otherInfo.weight) && allergyList.equals(otherInfo.allergyList);
+        return height.equals(otherInfo.height) && weight.equals(otherInfo.weight) && allergySet.equals(otherInfo.allergySet);
     }
 
     @Override
